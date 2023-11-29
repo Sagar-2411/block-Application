@@ -1,0 +1,137 @@
+package com.codewithdurgesh.blog.controller;
+
+
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codewithdurgesh.blog.config.constants.AppConstant;
+import com.codewithdurgesh.blog.helper.ApiResponse;
+import com.codewithdurgesh.blog.payload.CategoryDto;
+import com.codewithdurgesh.blog.payload.CategoryResponse;
+import com.codewithdurgesh.blog.payload.PostDto;
+import com.codewithdurgesh.blog.services.CategoryService;
+
+@RestController
+@RequestMapping("/api/category")
+public class CategoryController {
+	
+	Logger logger=LoggerFactory.getLogger(CategoryController.class);
+	@Autowired
+	private CategoryService categorySer;
+
+	//Create
+	
+	//comments
+	/**
+	 * @author Sagar
+	 * @apiNote to save category data into database
+	 * @param categoryDto
+	 * @since 1.ov
+	 * @return
+	 */
+	@PostMapping("/category")
+	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
+		logger.info("Entering request for the save category data in controller layer");
+		CategoryDto createCategory = this.categorySer.createCategory(categoryDto);
+		logger.info("complite request for save category data in controller layer ");
+		return new ResponseEntity<CategoryDto>(createCategory,HttpStatus.CREATED);
+		
+		
+	}
+	
+	//update
+	/**
+	 * @author Sagar
+	 * @apiNote  to update the category data
+	 * @param categoryDto
+	 * @param catId
+	 * @since 1.0v
+	 * @return
+	 */
+	@PutMapping("/{catId}")
+	public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto,@PathVariable Integer catId){
+
+		logger.info("Entering request for the update category data in controller layer");
+		CategoryDto updateCategory = this.categorySer.updateCategory(categoryDto, catId);
+		logger.info("complite request for update category data in controller layer ");
+		return new ResponseEntity<CategoryDto>(updateCategory,HttpStatus.OK);
+	}
+	
+	//delete
+	/**
+	 * @author Sagar
+	 * @apiNote to delete category data
+	 * @param catId
+	 * @since 1.0v
+	 * @return
+	 */
+	@DeleteMapping("/{catId}")
+	public ResponseEntity<ApiResponse> DeleteCategory(@PathVariable Integer catId){
+
+		logger.info("Entering request for the delete category data in controller layer");
+		this.categorySer.deleteCategory(catId);
+		logger.info("complite request for delete category data in controller layer ");
+		return new ResponseEntity<ApiResponse>(new ApiResponse("Category is delete succefully ",true),HttpStatus.OK);
+	}
+	
+	//get
+	/**
+	 * @author Sagar
+	 * @apiNote to retrieve  category data from database
+	 * @param catId
+	 * @since 1.0v
+	 * @return
+	 */
+	@GetMapping("/{catId}")
+	public ResponseEntity<CategoryDto> getCategory(@PathVariable Integer catId){
+
+		logger.info("Entering request for the get category data in controller layer");
+		CategoryDto categoryDto = this.categorySer.getCategory(catId);
+		logger.info("complite request for get category data in controller layer ");
+		return new ResponseEntity<CategoryDto>(categoryDto,HttpStatus.OK);
+				
+	}
+	//getAll
+	/**
+	 * @author Sagar
+	 * @apiNote to gate All category data from database,
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return
+	 */
+	@GetMapping("/")
+	public ResponseEntity <CategoryResponse> getAllCategory(
+			@RequestParam(value= "pageNumber" ,defaultValue = AppConstant.PAGE_NUMBER,required = false) Integer pageNumber,
+			@RequestParam(value= "pageSize", defaultValue = AppConstant.PAGE_SIZE,required = false)Integer pageSize,
+			@RequestParam(value = "sortBy", defaultValue = AppConstant.SORT_BY, required = false) String sortBy,
+			@RequestParam(value= "sortDir",defaultValue = AppConstant.SORT_DIR,required = false) String sortDir
+			){
+		logger.info("Entering request for the get all category data in controller layer");
+		CategoryResponse categories = this.categorySer.getCategories( pageNumber, pageSize,sortBy,sortDir);
+		logger.info("complite request for get all category data in controller layer ");
+		return new ResponseEntity<CategoryResponse>(categories,HttpStatus.OK);
+				
+	}
+	
+	
+
+	
+}
+

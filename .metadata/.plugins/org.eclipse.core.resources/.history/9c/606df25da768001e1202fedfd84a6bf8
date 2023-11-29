@@ -1,0 +1,35 @@
+package com.codewithdurgesh.blog.servicesImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.codewithdurgesh.blog.config.constants.AppConstant;
+import com.codewithdurgesh.blog.entitys.Post;
+import com.codewithdurgesh.blog.exceptions.ResourceNotFoundException;
+import com.codewithdurgesh.blog.payload.CommentDto;
+import com.codewithdurgesh.blog.repository.CommentRepo;
+import com.codewithdurgesh.blog.repository.PostRepo;
+import com.codewithdurgesh.blog.services.CommentService;
+
+public class CommentServiceImpl implements CommentService {
+	
+	@Autowired
+	private PostRepo postRepo;
+	
+	@Autowired
+	private CommentRepo commentRepo;
+
+	@Override
+	public CommentDto createComment(CommentDto commentDto, Integer postId) {
+
+
+		Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException(AppConstant.NOT_FOUND + postId));
+		return null;
+	}
+
+	@Override
+	public void deleteComment(Integer commentId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
